@@ -2,7 +2,6 @@ package ee.tlu.classes;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.security.AllPermission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,12 +90,12 @@ public class PieceManipulator {
 		return false;
 	}
 	
-	public void move(int fromRow, int fromColumn, int toRow, int toColumn){
-		if(possibleToMove(fromRow, fromColumn, toRow, toColumn)){
-			int movingPieceIndex = findGamePiecePositionInList(fromRow, fromColumn);
+	public void move(TwitterMove newMove){
+		if(possibleToMove(newMove.getFromRow(), newMove.getFromColumn(), newMove.getToRow(), newMove.getToColumn())){
+			int movingPieceIndex = findGamePiecePositionInList(newMove.getFromRow(), newMove.getFromColumn());
 			GamePiece movingPiece = activeGamePieces.get(movingPieceIndex);
-			movingPiece.setRow(toRow);
-			movingPiece.setColumn(toColumn);
+			movingPiece.setRow(newMove.getToRow());
+			movingPiece.setColumn(newMove.getToColumn());
 		} else {
 			System.out.println("Sellist käiku ei saa teha!");
 		}
@@ -110,7 +109,7 @@ public class PieceManipulator {
 	}
 	
 	private boolean withinReach(int fromRow, int fromColumn, int toRow, int toColumn){
-		// TODO Kontroll, kas saab liikuda
+		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega
 		return true;
 	}
 		

@@ -57,7 +57,7 @@ public class GamePiece {
 				g.setColor(secondTeamColor);
 			}
 		}
-		g.fillOval(Coordinates.getXFromColumn(column), Coordinates.getYFromRow(row), SIDE, SIDE);
+		g.fillOval(CoordinateCalculator.getXFromColumn(column), CoordinateCalculator.getYFromRow(row), SIDE, SIDE);
 	}
 	
 	public void toggleHighlighted(){

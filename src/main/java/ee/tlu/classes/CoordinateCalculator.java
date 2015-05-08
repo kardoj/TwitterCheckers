@@ -7,10 +7,10 @@ import static ee.tlu.classes.Board.SIDE;
  * rea ja tulba numbrit. Coordinates leiab ise külje järgi vastavad x ja y.
 */
 
-public class Coordinates {
+public class CoordinateCalculator {
 	
 	// Private konstruktor, et objekti ei loodaks
-	private Coordinates(){}
+	private CoordinateCalculator(){}
 	
 	public static int getXFromColumn(int column){
 		return ((column-1)*SIDE);
