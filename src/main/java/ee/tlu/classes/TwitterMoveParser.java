@@ -11,8 +11,8 @@ import twitter4j.conf.ConfigurationBuilder;
 /*
  * Klass, mis küsib Twitter'ist tweet'e ja muudab need mängu käikudeks.
  * Käike saadetakse kujul:
- * #hashtag 1 1 1 2 2
- * tiim reast tulbast ritta tulpa
+ * #hashtag 1 1 2 2 1
+ * reast tulbast ritta tulpa tiim
  */
 
 public class TwitterMoveParser {
@@ -44,7 +44,7 @@ public class TwitterMoveParser {
 			e.printStackTrace();
 		}
 		// Kui on sama käik, mis eelmine, tagastan eelmise
-		if(lastMove.isEqualTo(latestMoveFromTwitter)){
+		if(latestMoveFromTwitter == null || lastMove.isEqualTo(latestMoveFromTwitter)){
 			return lastMove;
 		}
 		return latestMoveFromTwitter;
@@ -52,13 +52,17 @@ public class TwitterMoveParser {
 	
 	private TwitterMove parseMoveString(String twitterMoveString){
 		TwitterMove twitterMove = null;
-		String[] pieces = twitterMoveString.split(" ");
-		int team = Integer.parseInt(pieces[1]);
-		int fromRow = Integer.parseInt(pieces[2]);
-		int fromColumn = Integer.parseInt(pieces[3]);
-		int toRow = Integer.parseInt(pieces[4]);
-		int toColumn = Integer.parseInt(pieces[5]);
-		twitterMove = new TwitterMove(fromRow, fromColumn, toRow, toColumn, team);
+		try{
+			String[] pieces = twitterMoveString.split(" ");
+			int fromRow = Integer.parseInt(pieces[1]);
+			int fromColumn = Integer.parseInt(pieces[2]);
+			int toRow = Integer.parseInt(pieces[3]);
+			int toColumn = Integer.parseInt(pieces[4]);
+			int team = Integer.parseInt(pieces[5]);
+			twitterMove = new TwitterMove(fromRow, fromColumn, toRow, toColumn, team);
+		} catch(Exception e){
+			System.out.println("Ei õnnestunud käiku luua");
+		}
 		return twitterMove;
 	}
 	
@@ -67,10 +71,10 @@ public class TwitterMoveParser {
 	    Query query = new Query(hashtag);
 	    query.count(1);
 	    QueryResult result = twitter.search(query);
+        System.out.println((query.getSince()));
 	    for (Status status : result.getTweets()) {
 	        latestMoveString = status.getText();
 	    }
-	    
 	    return latestMoveString;
 	}
 	

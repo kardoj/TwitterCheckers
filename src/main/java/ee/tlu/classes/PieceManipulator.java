@@ -5,17 +5,12 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ee.tlu.classes.Board.SIDE;
-
 public class PieceManipulator {
 
-	public static final Color firstTeamColor = Color.BLUE;
-	public static final Color secondTeamColor = Color.GREEN;
-	public static final Color highlightedColor = Color.CYAN;
+	public static final Color firstTeamColor = Color.LIGHT_GRAY;
+	public static final Color secondTeamColor = Color.BLUE;
 	
 	private List<GamePiece> activeGamePieces = new ArrayList<>();
-	private int teamOnePieceCount = 12;
-	private int teamTwoPieceCount = 12;
 	
 	public PieceManipulator(){}
 	
@@ -29,9 +24,7 @@ public class PieceManipulator {
 				{0, 1, 0, 1, 0, 1, 0, 1},
 				{1, 0, 1, 0, 1, 0, 1, 0},
 				{0, 1, 0, 1, 0, 1, 0, 1}};
-		
-		int x = 0;
-		int y = 0;
+
 		for (int i = 0; i < initialBoardState.length; i++) {
 			for (int j = 0; j < initialBoardState[i].length; j++) {
 				if(initialBoardState[i][j] == 1){
@@ -39,10 +32,7 @@ public class PieceManipulator {
 				} else if(initialBoardState[i][j] == 2){
 					activeGamePieces.add(new GamePiece(i+1, j+1, 2));
 				}
-				x += SIDE;
 			}
-			x = 0;
-			y += SIDE;
 		}
 	}
 	
@@ -72,16 +62,6 @@ public class PieceManipulator {
 		activeGamePieces.add(piece);
 	}
 	
-	public boolean isPlayerPiece(int row, int column){
-		int position = findGamePiecePositionInList(row, column);
-		if(position >= 0){
-			if(activeGamePieces.get(position).getTeam() == 1){
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public boolean hasAPiece(int row, int column){
 		int position = findGamePiecePositionInList(row, column);
 		if(position != -1){
@@ -90,26 +70,58 @@ public class PieceManipulator {
 		return false;
 	}
 	
-	public void move(TwitterMove newMove){
-		if(possibleToMove(newMove.getFromRow(), newMove.getFromColumn(), newMove.getToRow(), newMove.getToColumn())){
-			int movingPieceIndex = findGamePiecePositionInList(newMove.getFromRow(), newMove.getFromColumn());
-			GamePiece movingPiece = activeGamePieces.get(movingPieceIndex);
-			movingPiece.setRow(newMove.getToRow());
-			movingPiece.setColumn(newMove.getToColumn());
+	// Saadab true kui käidi ja false kui ei saanud käia.
+	public boolean move(TwitterMove newMove){
+		int toRow = newMove.getToRow();
+		int toColumn = newMove.getToColumn();
+		if(possibleToMove(newMove)){
+			GamePiece movingPiece = getMovingPiece(newMove);
+			movingPiece.setRow(toRow);
+			movingPiece.setColumn(toColumn);
 		} else {
-			System.out.println("Sellist käiku ei saa teha!");
+			return false;
 		}
+		return true;
 	}
 	
-	private boolean possibleToMove(int fromRow, int fromColumn, int toRow, int toColumn){
-		if(!hasAPiece(toRow, toColumn) && withinReach(fromRow, fromColumn, toRow, toColumn)){
+	private boolean possibleToMove(TwitterMove move){
+		int toRow = move.getToRow();
+		int toColumn = move.getToColumn();
+		if(!hasAPiece(toRow, toColumn) && withinReach(move) && isCorrectTeamPiece(move)){
 			return true;
 		}
 		return false;
 	}
 	
-	private boolean withinReach(int fromRow, int fromColumn, int toRow, int toColumn){
+	private GamePiece getMovingPiece(TwitterMove move){
+		int movingPieceIndex = findGamePiecePositionInList(move.getFromRow(), move.getFromColumn());
+		GamePiece movingPiece = activeGamePieces.get(movingPieceIndex);
+		return movingPiece;
+	}
+	
+	// Meetod kontrollimiseks, kas nupp, millega käiakse, on käigus defineeritud meeskonna oma
+	private boolean isCorrectTeamPiece(TwitterMove move){
+		GamePiece movingPiece = getMovingPiece(move);
+		if(movingPiece.getTeam() == move.getTeam()){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean withinReach(TwitterMove move){
+		int toRow = move.getToRow();
+		int toColumn = move.getToColumn();
+		int fromRow = move.getFromRow();
+		int fromColumn = move.getFromColumn();
+		int moverTeam = move.getTeam();
+		
 		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega
+		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha
+		// Samuti peaks siin sees käsitlema nupu äravõtmist.
+		// Hea on kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
+		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
+		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
+		
 		return true;
 	}
 		

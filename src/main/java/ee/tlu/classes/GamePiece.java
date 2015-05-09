@@ -5,13 +5,11 @@ import java.awt.Graphics;
 import static ee.tlu.classes.Board.SIDE;
 import static ee.tlu.classes.PieceManipulator.firstTeamColor;
 import static ee.tlu.classes.PieceManipulator.secondTeamColor;
-import static ee.tlu.classes.PieceManipulator.highlightedColor;
 
 public class GamePiece {
 	private int column;
 	private int row;
 	private int team; // 1 - alumine (mängija), 2 - arvuti (AI)
-	private boolean highlighted = false;
 	
 	public GamePiece(int row, int column, int team){
 		this.column = column;
@@ -43,28 +41,12 @@ public class GamePiece {
 		this.team = team;
 	}
 	
-	public boolean isHiglighted(){
-		return highlighted;
-	}
-	
 	public void draw(Graphics g){
-		if(highlighted){
-			g.setColor(highlightedColor);
+		if(team == 1){
+			g.setColor(firstTeamColor);
 		} else {
-			if(team == 1){
-				g.setColor(firstTeamColor);
-			} else {
-				g.setColor(secondTeamColor);
-			}
+			g.setColor(secondTeamColor);
 		}
 		g.fillOval(CoordinateCalculator.getXFromColumn(column), CoordinateCalculator.getYFromRow(row), SIDE, SIDE);
-	}
-	
-	public void toggleHighlighted(){
-		if(highlighted){
-			highlighted = false;
-		} else {
-			highlighted = true;
-		}
 	}
 }

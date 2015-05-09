@@ -6,6 +6,10 @@ import java.awt.Graphics;
 public class Board {
 
 	public static final int SIDE = 100;
+	public static final int rowCount = 8;
+	public static final int columnCount = 8;
+	private final Color LIGHT = Color.WHITE;
+	private final Color DARK = Color.BLACK;
 	
 	public Board(){}
 	
@@ -16,9 +20,9 @@ public class Board {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if(color == 0){
-					g.setColor(Color.WHITE);
+					g.setColor(LIGHT);
 				} else {
-					g.setColor(Color.BLACK);
+					g.setColor(DARK);
 				}
 				g.fillRect(x, y, SIDE, SIDE);
 				if(j != 7){
