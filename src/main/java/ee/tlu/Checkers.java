@@ -16,12 +16,12 @@ import ee.tlu.classes.PieceManipulator;
 import ee.tlu.classes.TwitterMove;
 import ee.tlu.classes.TwitterMoveParser;
 import static ee.tlu.classes.Board.SIDE;
-import static ee.tlu.classes.Board.rowCount;
-import static ee.tlu.classes.Board.columnCount;
+import static ee.tlu.classes.Board.startX;
+import static ee.tlu.classes.Board.startY;
 
 public class Checkers extends JApplet implements ActionListener {	
+	private static final long serialVersionUID = 1L;
 	JPanel gameBoardPanel = new JPanel();
-	
 	Board board;
 	PieceManipulator pieceManipulator;
 	TwitterMove lastMove = null;
@@ -29,23 +29,28 @@ public class Checkers extends JApplet implements ActionListener {
 	Timer twitterTimer;
 	ActionMessage actionMessage;
 	String hashtag = null;
+	int windowWidth;
+	int windowHeight;
 	
 	public void init(){
 		board = new Board();
 		twitterTimer = new Timer(5000, this);
 		pieceManipulator = new PieceManipulator();
 		pieceManipulator.createInitialGamePieces();
-		actionMessage = new ActionMessage("Ootan hashtag'i...", SIDE/2, rowCount*SIDE-SIDE/2+10);
+		actionMessage = new ActionMessage("Ootan hashtag'i...", SIDE/2+startX, 8*SIDE-SIDE/2+10+startY);
 		setLayout();
 		setVisible(true);
 		hashtag = getHashtag();
+		// Easter egg, kui hashtag exit, mine välja :D
+		if(hashtag.equals("exit")){
+			System.exit(0);
+		}
 		twitterMoveParser = new TwitterMoveParser(hashtag);
 		
 		// Kuna enne käimist võrreldakse uut käiku viimasega, loon suvalise
 		// algse pseudokäigu tiimiga kaks, et alustajaks oleks tiim 1.
 		lastMove = new TwitterMove(0, 0, 0, 0, 2);
 		twitterTimer.start();
-		//pieceManipulator.move(new TwitterMove(6, 2, 5, 3, 1));
 		actionMessage.setMessage("Mäng on alanud!");
 		repaint();
 	}
@@ -64,8 +69,8 @@ public class Checkers extends JApplet implements ActionListener {
 	}
 
 	private void setLayout(){
-		int windowWidth = columnCount*SIDE;
-		int windowHeight = rowCount*SIDE;
+		windowWidth = 8*SIDE+startX;
+		windowHeight = 8*SIDE+startY;
 		setSize(windowWidth, windowHeight);
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, gameBoardPanel);
@@ -88,24 +93,35 @@ public class Checkers extends JApplet implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == twitterTimer){
 			// Otsi Twitter'ist uus käik ja käi
-			TwitterMove newMove = twitterMoveParser.getNewMove(lastMove);
 			actionMessage.setMessage("Ootan uut käiku... (tiim " + getNextMoveTeam() + ")");
+			TwitterMove newMove = twitterMoveParser.getNewMove(lastMove);
+			
 			if(newMove.getTeam() != lastMove.getTeam()){
 				boolean moveWasMade = pieceManipulator.move(newMove);
 				if(moveWasMade){
 					actionMessage.setMessage("Käik: " + newMove.toString());
+					lastMove = newMove;
 				} else {
 					actionMessage.setMessage("Sellist käiku ei saa teha!");
 				}
-				lastMove = newMove;
+				
 				boolean firstTeamWon = newMove.getToRow() == 1 && newMove.getTeam() == 1;
 				boolean secondTeamWon = newMove.getToRow() == 8 && newMove.getTeam() == 2;
+				
 				if(firstTeamWon || secondTeamWon){
+					moveActionMessageToCenter();
 					actionMessage.setMessage("TIIM " + newMove.getTeam() + " VÕITIS!");
 					twitterTimer.stop();
 				}
 			}
 			repaint();
 		}
+	}
+	
+	public void moveActionMessageToCenter(){
+		int x = startX+windowWidth/2-230;
+		int y = startY+windowHeight/2;
+		actionMessage.setPosition(x, y);
+		actionMessage.setSize(60);
 	}
 }

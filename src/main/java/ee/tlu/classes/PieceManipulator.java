@@ -70,7 +70,7 @@ public class PieceManipulator {
 		return false;
 	}
 	
-	// Saadab true kui käidi ja false kui ei saanud käia.
+	// Tagastab true kui käidi ja false kui ei saanud käia.
 	public boolean move(TwitterMove newMove){
 		int toRow = newMove.getToRow();
 		int toColumn = newMove.getToColumn();
@@ -78,16 +78,17 @@ public class PieceManipulator {
 			GamePiece movingPiece = getMovingPiece(newMove);
 			movingPiece.setRow(toRow);
 			movingPiece.setColumn(toColumn);
-		} else {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	private boolean possibleToMove(TwitterMove move){
+		int fromRow = move.getFromRow();
+		int fromColumn = move.getFromColumn();
 		int toRow = move.getToRow();
 		int toColumn = move.getToColumn();
-		if(!hasAPiece(toRow, toColumn) && withinReach(move) && isCorrectTeamPiece(move)){
+		if(!hasAPiece(toRow, toColumn) && hasAPiece(fromRow, fromColumn) && isCorrectTeamPiece(move) && withinReach(move)){
 			return true;
 		}
 		return false;
@@ -95,11 +96,14 @@ public class PieceManipulator {
 	
 	private GamePiece getMovingPiece(TwitterMove move){
 		int movingPieceIndex = findGamePiecePositionInList(move.getFromRow(), move.getFromColumn());
-		GamePiece movingPiece = activeGamePieces.get(movingPieceIndex);
-		return movingPiece;
+		boolean movingPieceExists = movingPieceIndex != -1;
+		if(movingPieceExists){
+			GamePiece movingPiece = activeGamePieces.get(movingPieceIndex);
+			return movingPiece;
+		}
+		return null;
 	}
 	
-	// Meetod kontrollimiseks, kas nupp, millega käiakse, on käigus defineeritud meeskonna oma
 	private boolean isCorrectTeamPiece(TwitterMove move){
 		GamePiece movingPiece = getMovingPiece(move);
 		if(movingPiece.getTeam() == move.getTeam()){
@@ -121,6 +125,7 @@ public class PieceManipulator {
 		// Hea on kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
 		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
 		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
+		// Kui saab liikuda, return true, muidu false.
 		
 		return true;
 	}

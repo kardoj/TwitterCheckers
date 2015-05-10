@@ -19,10 +19,17 @@ public class TwitterMoveParser {
 	
 	private String hashtag;
 	private Twitter twitter;
+	private long sinceId = 0;
 	
 	public TwitterMoveParser(String hashtag){
 		this.hashtag = hashtag;
 		configureTwitter();
+		
+		try {
+			setInitialSinceId();
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void configureTwitter(){
@@ -43,11 +50,21 @@ public class TwitterMoveParser {
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
-		// Kui on sama käik, mis eelmine, tagastan eelmise
+		// Kui on sama käik, mis eelmine, või ei ole üldse, tagastan eelmise
 		if(latestMoveFromTwitter == null || lastMove.isEqualTo(latestMoveFromTwitter)){
 			return lastMove;
 		}
 		return latestMoveFromTwitter;
+	}
+	
+	// Määran alguses ära, millisest tweet'ist alates uusi võtta, et eelmisi mitte lugeda
+	private void setInitialSinceId() throws TwitterException{
+		Query query = new Query(hashtag);
+	    query.count(1);
+	    QueryResult result = twitter.search(query);
+	    for (Status status : result.getTweets()) {
+	        sinceId = status.getId();
+	    }		
 	}
 	
 	private TwitterMove parseMoveString(String twitterMoveString){
@@ -70,10 +87,12 @@ public class TwitterMoveParser {
 		String latestMoveString = null;
 	    Query query = new Query(hashtag);
 	    query.count(1);
+	    query.setSinceId(sinceId);
+	    query.getSinceId();
 	    QueryResult result = twitter.search(query);
-        System.out.println((query.getSince()));
 	    for (Status status : result.getTweets()) {
 	        latestMoveString = status.getText();
+	        sinceId = status.getId();
 	    }
 	    return latestMoveString;
 	}

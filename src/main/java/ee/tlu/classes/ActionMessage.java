@@ -16,13 +16,22 @@ public class ActionMessage {
 		this.message = message;
 		this.x = x;
 		this.y = y;
-		color = Color.WHITE;
+		color = Color.GREEN;
 		shadowColor = Color.BLACK;
 		size = 20;
 	}
 	
 	public void setMessage(String message){
 		this.message = message;
+	}
+	
+	public void setPosition(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void setSize(int size){
+		this.size = size;
 	}
 	
 	public void draw(Graphics g){
