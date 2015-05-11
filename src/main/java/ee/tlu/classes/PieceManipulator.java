@@ -42,12 +42,7 @@ public class PieceManipulator {
 		}
 	}
 	
-	public void remove(int row, int column){
-		int position = findGamePiecePositionInList(row, column);
-		activeGamePieces.remove(position);
-	}
-	
-	public int findGamePiecePositionInList(int row, int column){
+	private int findGamePiecePositionInList(int row, int column){
 		for(int i=0; i<activeGamePieces.size(); i++){
 			boolean rowsMatch = activeGamePieces.get(i).getRow() == row;
 			boolean columnsMatch = activeGamePieces.get(i).getColumn() == column;
@@ -58,13 +53,10 @@ public class PieceManipulator {
 		return -1;
 	}
 	
-	public void add(GamePiece piece){
-		activeGamePieces.add(piece);
-	}
-	
-	public boolean hasAPiece(int row, int column){
+	private boolean hasAPiece(int row, int column){
 		int position = findGamePiecePositionInList(row, column);
-		if(position != -1){
+		boolean gamePieceExists = position != -1;
+		if(gamePieceExists){
 			return true;
 		}
 		return false;
@@ -88,7 +80,7 @@ public class PieceManipulator {
 		int fromColumn = move.getFromColumn();
 		int toRow = move.getToRow();
 		int toColumn = move.getToColumn();
-		if(!hasAPiece(toRow, toColumn) && hasAPiece(fromRow, fromColumn) && isCorrectTeamPiece(move) && withinReach(move)){
+		if(hasAPiece(fromRow, fromColumn) && isCorrectTeamPiece(move) && isAllowedMove(move) && !hasAPiece(toRow, toColumn)){
 			return true;
 		}
 		return false;
@@ -112,17 +104,21 @@ public class PieceManipulator {
 		return false;
 	}
 	
-	private boolean withinReach(TwitterMove move){
+	private void remove(int row, int column){
+		int position = findGamePiecePositionInList(row, column);
+		activeGamePieces.remove(position);
+	}
+	
+	private boolean isAllowedMove(TwitterMove move){
 		int toRow = move.getToRow();
 		int toColumn = move.getToColumn();
 		int fromRow = move.getFromRow();
 		int fromColumn = move.getFromColumn();
 		int moverTeam = move.getTeam();
 		
-		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega
-		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha
-		// Samuti peaks siin sees käsitlema nupu äravõtmist.
-		// Hea on kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
+		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega.
+		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha.
+		// Nupu võtmisel on hea kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
 		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
 		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
 		// Kui saab liikuda, return true, muidu false.

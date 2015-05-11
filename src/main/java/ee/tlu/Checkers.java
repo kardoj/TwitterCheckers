@@ -104,21 +104,23 @@ public class Checkers extends JApplet implements ActionListener {
 				} else {
 					actionMessage.setMessage("Sellist käiku ei saa teha!");
 				}
-				
-				boolean firstTeamWon = newMove.getToRow() == 1 && newMove.getTeam() == 1;
-				boolean secondTeamWon = newMove.getToRow() == 8 && newMove.getTeam() == 2;
-				
-				if(firstTeamWon || secondTeamWon){
-					moveActionMessageToCenter();
-					actionMessage.setMessage("TIIM " + newMove.getTeam() + " VÕITIS!");
-					twitterTimer.stop();
-				}
+				checkWinCondition(newMove);
 			}
 			repaint();
 		}
 	}
 	
-	public void moveActionMessageToCenter(){
+	private void checkWinCondition(TwitterMove newMove){
+		boolean firstTeamWon = newMove.getToRow() == 1 && newMove.getTeam() == 1;
+		boolean secondTeamWon = newMove.getToRow() == 8 && newMove.getTeam() == 2;
+		if(firstTeamWon || secondTeamWon){
+			moveActionMessageToCenter();
+			actionMessage.setMessage("TIIM " + newMove.getTeam() + " VÕITIS!");
+			twitterTimer.stop();
+		}		
+	}
+	
+	private void moveActionMessageToCenter(){
 		int x = startX+windowWidth/2-230;
 		int y = startY+windowHeight/2;
 		actionMessage.setPosition(x, y);

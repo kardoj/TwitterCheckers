@@ -88,7 +88,6 @@ public class TwitterMoveParser {
 	    Query query = new Query(hashtag);
 	    query.count(1);
 	    query.setSinceId(sinceId);
-	    query.getSinceId();
 	    QueryResult result = twitter.search(query);
 	    for (Status status : result.getTweets()) {
 	        latestMoveString = status.getText();
