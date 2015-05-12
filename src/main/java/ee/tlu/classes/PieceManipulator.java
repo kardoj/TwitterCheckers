@@ -118,8 +118,11 @@ public class PieceManipulator {
 		int jumpRow = (fromRow + toRow) / 2;
 		int jumpColumn = (fromColumn + toColumn) / 2;
 		
-		if (fromRow - toRow == 2 || fromRow - toRow == -2) {
+		if (fromRow - toRow == 2 || fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn)) {
 			remove(jumpRow, jumpColumn);
+			return true;
+		}else if(fromRow - toRow == 2 || fromRow - toRow == -2 && !hasAPiece(jumpRow, jumpColumn)){
+			return false;
 		}
 		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega.
 		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha.
@@ -127,7 +130,6 @@ public class PieceManipulator {
 		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
 		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
 		// Kui saab liikuda, return true, muidu false.
-		
 		return true;
 	}
 		
