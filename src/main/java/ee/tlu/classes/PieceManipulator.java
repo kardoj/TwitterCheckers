@@ -120,26 +120,22 @@ public class PieceManipulator {
 		int diagRow = fromRow-toRow;
 		int diagColumn = fromColumn-toColumn;
 		
-		//Liikumise kontroll
+		//Liikumise ja äravõtmise kontroll
 		if (moverTeam == 1 && diagRow == 1 && !hasAPiece(toRow, toColumn)){
 			return true;
-		}else if(moverTeam == 1 && diagRow == 0 || diagRow == -1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
-			return false;
-		}
-		
-		if (moverTeam == 2 && diagRow == -1 && !hasAPiece(toRow, toColumn)){
+		}else if (moverTeam == 2 && diagRow == -1 && !hasAPiece(toRow, toColumn)){
 			return true;
-		}else if(moverTeam == 2 && diagRow == 0 || diagRow == 1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
-			return false;
-		}
-		
-		//Äravõtmise kontroll
-		if (fromRow - toRow == 2 || fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn)) {
+		}else if (fromRow - toRow == 2 || fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn)) {
 			remove(jumpRow, jumpColumn);
 			return true;
 		}else if(fromRow - toRow == 2 || fromRow - toRow == -2 && !hasAPiece(jumpRow, jumpColumn)){
 			return false;
+		}else if(moverTeam == 1 && diagRow == 0 || diagRow == -1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
+			return false;
+		}else if(moverTeam == 2 && diagRow == 0 || diagRow == 1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
+			return false;
 		}
+		
 		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega.
 		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha.
 		// Nupu võtmisel on hea kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
