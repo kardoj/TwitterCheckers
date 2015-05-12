@@ -117,7 +117,23 @@ public class PieceManipulator {
 		int moverTeam = move.getTeam();
 		int jumpRow = (fromRow + toRow) / 2;
 		int jumpColumn = (fromColumn + toColumn) / 2;
+		int diagRow = fromRow-toRow;
+		int diagColumn = fromColumn-toColumn;
 		
+		//Liikumise kontroll
+		if (moverTeam == 1 && diagRow == 1 && !hasAPiece(toRow, toColumn)){
+			return true;
+		}else if(moverTeam == 1 && diagRow == 0 || diagRow == -1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
+			return false;
+		}
+		
+		if (moverTeam == 2 && diagRow == -1 && !hasAPiece(toRow, toColumn)){
+			return true;
+		}else if(moverTeam == 2 && diagRow == 0 || diagRow == 1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
+			return false;
+		}
+		
+		//Äravõtmise kontroll
 		if (fromRow - toRow == 2 || fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn)) {
 			remove(jumpRow, jumpColumn);
 			return true;
@@ -130,7 +146,7 @@ public class PieceManipulator {
 		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
 		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
 		// Kui saab liikuda, return true, muidu false.
-		return true;
+		return false;
 	}
 		
 }
