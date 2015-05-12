@@ -115,7 +115,12 @@ public class PieceManipulator {
 		int fromRow = move.getFromRow();
 		int fromColumn = move.getFromColumn();
 		int moverTeam = move.getTeam();
+		int jumpRow = (fromRow + toRow) / 2;
+		int jumpColumn = (fromColumn + toColumn) / 2;
 		
+		if (fromRow - toRow == 2 || fromRow - toRow == -2) {
+			remove(jumpRow, jumpColumn);
+		}
 		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega.
 		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha.
 		// Nupu võtmisel on hea kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
