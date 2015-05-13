@@ -125,11 +125,12 @@ public class PieceManipulator {
 			return true;
 		}else if (moverTeam == 2 && diagRow == -1 && !hasAPiece(toRow, toColumn)){
 			return true;
-		}else if (fromRow - toRow == 2 || fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn)) {
+		}else if (moverTeam == 1 && fromRow - toRow == 2 && hasAPiece(jumpRow, jumpColumn) && hasAPiece(toRow, toColumn)) {
 			remove(jumpRow, jumpColumn);
 			return true;
-		}else if(fromRow - toRow == 2 || fromRow - toRow == -2 && !hasAPiece(jumpRow, jumpColumn)){
-			return false;
+		}else if (moverTeam == 2 && fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn) && hasAPiece(toRow, toColumn)) {
+			remove(jumpRow, jumpColumn);
+			return true;
 		}else if(moverTeam == 1 && diagRow == 0 || diagRow == -1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
 			return false;
 		}else if(moverTeam == 2 && diagRow == 0 || diagRow == 1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
