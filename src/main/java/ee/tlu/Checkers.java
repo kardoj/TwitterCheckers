@@ -111,9 +111,11 @@ public class Checkers extends JApplet implements ActionListener {
 	}
 	
 	private void checkWinCondition(TwitterMove newMove){
+		int firstTeamPieceCount = pieceManipulator.getFirstTeamPieceCount();
+		int secondTeamPieceCount = pieceManipulator.getSecondTeamPieceCount();
 		boolean firstTeamWon = newMove.getToRow() == 1 && newMove.getTeam() == 1;
 		boolean secondTeamWon = newMove.getToRow() == 8 && newMove.getTeam() == 2;
-		if(firstTeamWon || secondTeamWon){
+		if(firstTeamWon || secondTeamWon || firstTeamPieceCount == 0 || secondTeamPieceCount == 0){
 			moveActionMessageToCenter();
 			actionMessage.setMessage("TIIM " + newMove.getTeam() + " VÕITIS!");
 			twitterTimer.stop();

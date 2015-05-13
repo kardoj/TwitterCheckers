@@ -11,6 +11,8 @@ public class PieceManipulator {
 	public static final Color secondTeamColor = Color.BLUE;
 	
 	private List<GamePiece> activeGamePieces = new ArrayList<>();
+	private int firstTeamPieceCount = 0;
+	private int secondTeamPieceCount = 0;
 	
 	public PieceManipulator(){}
 	
@@ -34,6 +36,17 @@ public class PieceManipulator {
 				}
 			}
 		}
+		
+		firstTeamPieceCount = 12;
+		secondTeamPieceCount = 12;
+	}
+	
+	public int getFirstTeamPieceCount(){
+		return firstTeamPieceCount;
+	}
+	
+	public int getSecondTeamPieceCount(){
+		return secondTeamPieceCount;
 	}
 	
 	public void draw(Graphics g){
@@ -106,7 +119,17 @@ public class PieceManipulator {
 	
 	private void remove(int row, int column){
 		int position = findGamePiecePositionInList(row, column);
+		subtractOneFromTeamPieceCount(position);
 		activeGamePieces.remove(position);
+	}
+	
+	private void subtractOneFromTeamPieceCount(int piecePositionInList){
+		int team = activeGamePieces.get(piecePositionInList).getTeam();
+		if(team == 1){
+			firstTeamPieceCount--;
+		} else if(team == 2){
+			secondTeamPieceCount--;
+		}
 	}
 	
 	private boolean isAllowedMove(TwitterMove move){
@@ -118,31 +141,24 @@ public class PieceManipulator {
 		int jumpRow = (fromRow + toRow) / 2;
 		int jumpColumn = (fromColumn + toColumn) / 2;
 		int diagRow = fromRow-toRow;
-		int diagColumn = fromColumn-toColumn;
+		
+		boolean possibleRowNumbers = fromRow >= 1 && fromRow <= 8 && toRow >= 1 && toRow <= 8;
+		boolean possibleColumnNumbers = fromColumn >= 1 && fromColumn <= 8 && toColumn >= 1 && toColumn <= 8;
 		
 		//Liikumise ja äravõtmise kontroll
-		if (moverTeam == 1 && diagRow == 1 && !hasAPiece(toRow, toColumn)){
-			return true;
-		}else if (moverTeam == 2 && diagRow == -1 && !hasAPiece(toRow, toColumn)){
-			return true;
-		}else if (moverTeam == 1 && fromRow - toRow == 2 && hasAPiece(jumpRow, jumpColumn) && hasAPiece(toRow, toColumn)) {
-			remove(jumpRow, jumpColumn);
-			return true;
-		}else if (moverTeam == 2 && fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn) && hasAPiece(toRow, toColumn)) {
-			remove(jumpRow, jumpColumn);
-			return true;
-		}else if(moverTeam == 1 && diagRow == 0 || diagRow == -1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
-			return false;
-		}else if(moverTeam == 2 && diagRow == 0 || diagRow == 1 || diagColumn > 1 || diagColumn == 0 || diagColumn < -1 && hasAPiece(toRow, toColumn)){
-			return false;
+		if(possibleRowNumbers && possibleColumnNumbers){
+			if (moverTeam == 1 && diagRow == 1 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1) && !hasAPiece(toRow, toColumn)){
+				return true;
+			}else if (moverTeam == 2 && diagRow == -1 && (fromColumn == toColumn + 1 || fromColumn == toColumn - 1) && !hasAPiece(toRow, toColumn)){
+				return true;
+			}else if (moverTeam == 1 && fromRow - toRow == 2 && hasAPiece(jumpRow, jumpColumn) && !hasAPiece(toRow, toColumn)) {
+				remove(jumpRow, jumpColumn);
+				return true;
+			}else if (moverTeam == 2 && fromRow - toRow == -2 && hasAPiece(jumpRow, jumpColumn) && !hasAPiece(toRow, toColumn)) {
+				remove(jumpRow, jumpColumn);
+				return true;
+			}
 		}
-		
-		// TODO Kontroll, kas saab liikuda või on tegemist ära võtmisega.
-		// Teise nupu peale astumine on juba eraldi kontrollitud, seda ei ole vaja uuesti teha.
-		// Nupu võtmisel on hea kontrollida, et kui astutakse kaks rida kaugemale, peab keskmises
-		// reas kindlasti vastase nupp olema. Siis leida listist see nupp ja ära kustutada.
-		// Nuppe saab ära võtta ainult ühe kaupa ja mängu lõpu tingimus on ka juba ära kontrollitud.
-		// Kui saab liikuda, return true, muidu false.
 		return false;
 	}
 		
